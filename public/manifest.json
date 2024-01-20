@@ -1,0 +1,13 @@
+{
+  "manifest_version": 3,
+  "name": "Currency Converter",
+  "description": "Extension that convert currencis and shows up to date exchange rates",
+  "version": "1.0",
+  "icons": {
+    "16": "icon.png"
+  },
+  "action": {
+    "default_popup": "index.html"
+  },
+  "host_permissions": ["http://*/*", "https://*/*"]
+}
