@@ -1,6 +1,26 @@
 import "./App.css";
 import { useState, useEffect } from "react";
 
+const SwitchCurrency = () => (
+  <svg
+    className="svg-icon"
+    style={{
+      width: "1em",
+      height: "1em",
+      verticalAlign: "middle",
+      fill: "currentColor",
+      overflow: "hidden",
+    }}
+    viewBox="0 0 1024 1024"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M448 774.4v192l-448-320h1024v128H448z m-448-512h576v-192l448 320H0v-128z"
+      fill="##03479c"
+    />
+  </svg>
+);
+
 const Convert = () => {
   const [value, setValue] = useState();
   const [currencies, setCurrencies] = useState(null);
@@ -62,11 +82,19 @@ const Convert = () => {
     setConversionCurrency(e.target.value);
   };
 
+  const handleSwitch = () => {
+    setBaseCurrency(conversionCurrency);
+    setConversionCurrency(baseCurrency);
+  };
+
   return (
     <>
       <header className="bg-blue-500 text-white py-4 text-center">
         <div className="container mx-auto">
-          <h1 className="text-3xl font-extrabold">Currency Converter</h1>
+          <h1 className="text-3xl font-extrabold">
+            Currency Converter <sub>CX</sub>
+          </h1>
+          <h4>Includes Popular Crypto</h4>
         </div>
       </header>
       <div className="flex items-center justify-center mt-8">
@@ -98,6 +126,14 @@ const Convert = () => {
             ))}
         </select>
       </div>
+      <div className="flex items-center justify-center mt-4">
+        <button
+          onClick={handleSwitch}
+          className="bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 ml-2"
+        >
+          <SwitchCurrency />
+        </button>
+      </div>
 
       {result?.data &&
         Object.values(result.data).map((cur) => (
@@ -117,7 +153,9 @@ const Convert = () => {
             <footer className="bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-gray-200 py-4 text-center">
               <div className="container mx-auto">
                 <p>&copy; 2024 Currency Converter. All rights reserved.</p>
-                <p>CodeX</p>
+                <a href="https://github.com/Code-XT">
+                  <p>@CodeX</p>
+                </a>
               </div>
             </footer>
           </>
