@@ -1,5 +1,6 @@
 import "./App.css";
 import { useState, useEffect } from "react";
+import Select from "react-select";
 
 const SwitchCurrency = () => (
   <svg
@@ -20,6 +21,44 @@ const SwitchCurrency = () => (
     />
   </svg>
 );
+const customStyles = {
+  control: (provided, state) => ({
+    ...provided,
+    backgroundColor: "#21272e",
+    borderColor: state.isFocused ? "#4D90FE" : "#4B5563",
+    borderRadius: "0.375rem",
+    borderWidth: "1px",
+    boxShadow: state.isFocused ? "0 0 0 3px rgba(66, 153, 225, 0.5)" : "none",
+    "&:hover": {
+      borderColor: "#4D90FE",
+    },
+    transition: "all 0.3s",
+    input: {
+      color: "#fff",
+    },
+  }),
+  menu: (provided) => ({
+    ...provided,
+    backgroundColor: "#21272e",
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+  }),
+  option: (provided, state) => ({
+    ...provided,
+    backgroundColor: state.isSelected
+      ? "#4D90FE"
+      : state.isFocused
+      ? "#2C3840"
+      : "#21272e",
+    color: state.isSelected ? "white" : "#CBD5E0",
+    ":hover": {
+      backgroundColor: state.isSelected ? "#4D90FE" : "#2C3840",
+    },
+  }),
+  singleValue: (provided) => ({
+    ...provided,
+    color: "#CBD5E0",
+  }),
+};
 
 const Convert = () => {
   const [value, setValue] = useState();
@@ -64,7 +103,12 @@ const Convert = () => {
       }
 
       const results = await data.json();
-      setCurrencies(results);
+      setCurrencies(
+        Object.entries(results).map(([key, value]) => ({
+          label: `${value ? value : key} (${key.toUpperCase()})`,
+          value: key,
+        }))
+      );
     } catch (error) {
       console.error("Error fetching data:", error.message);
     }
@@ -74,12 +118,12 @@ const Convert = () => {
     setValue(e.target.value);
   };
 
-  const handleBaseCurrencyChange = (e) => {
-    setBaseCurrency(e.target.value);
+  const handleBaseCurrencyChange = (selectedOption) => {
+    setBaseCurrency(selectedOption.value);
   };
 
-  const handleConversionCurrencyChange = (e) => {
-    setConversionCurrency(e.target.value);
+  const handleConversionCurrencyChange = (selectedOption) => {
+    setConversionCurrency(selectedOption.value);
   };
 
   const handleSwitch = () => {
@@ -100,18 +144,14 @@ const Convert = () => {
 
       <div className="flex items-center justify-center mt-8 flex-col">
         <div className="mb-4">
-          <select
-            value={baseCurrency}
+          <Select
+            value={{ label: baseCurrency.toUpperCase(), value: baseCurrency }}
+            options={currencies}
             onChange={handleBaseCurrencyChange}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300"
-          >
-            {currencies &&
-              Object.entries(currencies).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {`${value ? value : key} (${key.toUpperCase()})`}
-                </option>
-              ))}
-          </select>
+            isSearchable
+            placeholder="Select Base Currency"
+            styles={customStyles}
+          />
         </div>
 
         <div className="mb-4">
@@ -134,18 +174,17 @@ const Convert = () => {
         </div>
 
         <div className="mb-4">
-          <select
-            value={conversionCurrency}
+          <Select
+            value={{
+              label: conversionCurrency.toUpperCase(),
+              value: conversionCurrency,
+            }}
+            options={currencies}
             onChange={handleConversionCurrencyChange}
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300"
-          >
-            {currencies &&
-              Object.entries(currencies).map(([key, value]) => (
-                <option key={key} value={key}>
-                  {`${value ? value : key} (${key.toUpperCase()})`}
-                </option>
-              ))}
-          </select>
+            isSearchable
+            placeholder="Select Conversion Currency"
+            styles={customStyles}
+          />
         </div>
 
         <div className="mb-4">
