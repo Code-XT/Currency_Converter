@@ -4,9 +4,13 @@
   "description": "Extension that convert currencis and shows up to date exchange rates",
   "version": "1.0",
   "icons": {
-    "16": "icon.png"
+    "16": "icon.png",
+    "32": "icon.png",
+    "48": "icon.png",
+    "128": "icon.png"
   },
   "action": {
+    "default_icon": "icon.png",
     "default_popup": "index.html"
   },
   "host_permissions": ["http://*/*", "https://*/*"]
