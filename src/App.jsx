@@ -24,11 +24,11 @@ const SwitchCurrency = () => (
 const Convert = () => {
   const [value, setValue] = useState();
   const [currencies, setCurrencies] = useState(null);
-  const [baseCurrency, setBaseCurrency] = useState("USD");
-  const [conversionCurrency, setConversionCurrency] = useState("INR");
+  const [baseCurrency, setBaseCurrency] = useState("usd");
+  const [conversionCurrency, setConversionCurrency] = useState("inr");
   const [result, setResult] = useState(null);
 
-  const API_KEY = `893f18301bfd9ed43af45054`;
+  const BASE_URL = `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies`;
 
   useEffect(() => {
     fetchData();
@@ -41,7 +41,7 @@ const Convert = () => {
   const fetchData = async () => {
     try {
       const data = await fetch(
-        `https://v6.exchangerate-api.com/v6/${API_KEY}/pair/${baseCurrency}/${conversionCurrency}`
+        `${BASE_URL}/${baseCurrency.toLowerCase()}/${conversionCurrency.toLowerCase()}.json`
       );
 
       if (!data.ok) {
@@ -57,9 +57,7 @@ const Convert = () => {
 
   const fetchCurrencies = async () => {
     try {
-      const data = await fetch(
-        `https://v6.exchangerate-api.com/v6/${API_KEY}/codes`
-      );
+      const data = await fetch(`${BASE_URL}.min.json`);
 
       if (!data.ok) {
         throw new Error("Failed to fetch data");
@@ -96,67 +94,88 @@ const Convert = () => {
           <h1 className="text-3xl font-extrabold">
             Currency Converter <sub>CX</sub>
           </h1>
+          <h3>Includes Most Common Cryptos</h3>
         </div>
       </header>
-      <div className="flex items-center justify-center mt-8">
-        <select
-          value={baseCurrency}
-          onChange={handleBaseCurrencyChange}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 mr-4"
-        >
-          {currencies?.supported_codes?.map((val) => (
-            <option value={`${val[0]}`}>{val[0]}</option>
-          ))}
-        </select>
-        <input
-          type="number"
-          value={value}
-          onChange={handleChange}
-          placeholder="Enter Value"
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 w-48"
-        />
-        <select
-          value={conversionCurrency}
-          onChange={handleConversionCurrencyChange}
-          className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 ml-4"
-        >
-          {currencies?.supported_codes?.map((val) => (
-            <option value={`${val[0]}`}>{val[0]}</option>
-          ))}
-        </select>
-      </div>
-      <div className="flex items-center justify-center mt-4">
-        <button
-          onClick={handleSwitch}
-          className="bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 ml-2"
-        >
-          <SwitchCurrency />
-        </button>
-      </div>
-      <>
-        <div className="flex items-center justify-center mt-4">
+
+      <div className="flex items-center justify-center mt-8 flex-col">
+        <div className="mb-4">
+          <select
+            value={baseCurrency}
+            onChange={handleBaseCurrencyChange}
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300"
+          >
+            {currencies &&
+              Object.entries(currencies).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {`${value ? value : key} (${key.toUpperCase()})`}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        <div className="mb-4">
           <input
-            key={result?.target_code}
-            value={result?.conversion_rate * value}
-            placeholder="Converted Value"
             type="number"
-            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 w-48 ml-1"
+            value={value}
+            onChange={handleChange}
+            placeholder="Enter Value"
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 w-48"
           />
         </div>
-        <div className="flex items-center justify-center mt-4">
-          <p className="items-center justify-center mt-4">
-            <b>{`Exchange Rate: 1 ${baseCurrency} = ${result?.conversion_rate} ${conversionCurrency}`}</b>
-          </p>
+
+        <div className="mb-4">
+          <button
+            onClick={handleSwitch}
+            className="bg-blue-500 text-white px-4 py-2 rounded-md focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300"
+          >
+            <SwitchCurrency />
+          </button>
         </div>
-        <footer className="bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-gray-200 py-4 text-center">
-          <div className="container mx-auto">
-            <p>&copy; 2024 Currency Converter. All rights reserved.</p>
-            <a href="https://github.com/Code-XT" target="_blank">
-              <p>@CodeX</p>
-            </a>
-          </div>
-        </footer>
-      </>
+
+        <div className="mb-4">
+          <select
+            value={conversionCurrency}
+            onChange={handleConversionCurrencyChange}
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300"
+          >
+            {currencies &&
+              Object.entries(currencies).map(([key, value]) => (
+                <option key={key} value={key}>
+                  {`${value ? value : key} (${key.toUpperCase()})`}
+                </option>
+              ))}
+          </select>
+        </div>
+
+        <div className="mb-4">
+          <input
+            key={result?.date}
+            value={result?.[conversionCurrency] * value}
+            placeholder="Converted Value"
+            type="number"
+            className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 w-48"
+          />
+        </div>
+
+        <div className="mb-4">
+          <p>
+            <b>{`Exchange Rate: 1 ${baseCurrency.toUpperCase()} = ${
+              result?.[conversionCurrency]
+            } ${conversionCurrency.toUpperCase()}`}</b>
+          </p>
+          <p>As of {result?.date}</p>
+        </div>
+      </div>
+
+      <footer className="bg-gray-300 dark:bg-gray-800 text-gray-700 dark:text-gray-200 py-4 text-center">
+        <div className="container mx-auto">
+          <p>&copy; 2024 Currency Converter. All rights reserved.</p>
+          <a href="https://github.com/Code-XT" target="_blank">
+            <p>@CodeX</p>
+          </a>
+        </div>
+      </footer>
     </>
   );
 };
