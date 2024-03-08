@@ -67,7 +67,7 @@ const Convert = () => {
   const [conversionCurrency, setConversionCurrency] = useState("inr");
   const [result, setResult] = useState(null);
 
-  const BASE_URL = `https://cdn.jsdelivr.net/gh/fawazahmed0/currency-api@1/latest/currencies`;
+  const BASE_URL = `https://cdn.jsdelivr.net/npm/@fawazahmed0/currency-api@latest/v1/currencies`;
 
   useEffect(() => {
     fetchData();
@@ -80,14 +80,14 @@ const Convert = () => {
   const fetchData = async () => {
     try {
       const data = await fetch(
-        `${BASE_URL}/${baseCurrency.toLowerCase()}/${conversionCurrency.toLowerCase()}.json`
+        `${BASE_URL}/${baseCurrency.toLowerCase()}.json`
       );
 
       if (!data.ok) {
         throw new Error("Failed to fetch data");
       }
-
       const rates = await data.json();
+      console.log(rates[baseCurrency][conversionCurrency]);
       setResult(rates);
     } catch (error) {
       console.error("Error fetching data:", error.message);
@@ -190,7 +190,7 @@ const Convert = () => {
         <div className="mb-4">
           <input
             key={result?.date}
-            value={result?.[conversionCurrency] * value}
+            value={result[baseCurrency][conversionCurrency] * value}
             placeholder="Converted Value"
             type="number"
             className="bg-white dark:bg-gray-800 border border-gray-300 dark:border-neutral-700 rounded-md px-4 py-2 focus:outline-none focus:ring focus:border-blue-300 transition-colors duration-300 w-48"
@@ -200,7 +200,7 @@ const Convert = () => {
         <div className="mb-4">
           <p>
             <b>{`Exchange Rate: 1 ${baseCurrency.toUpperCase()} = ${
-              result?.[conversionCurrency]
+              result[baseCurrency][conversionCurrency]
             } ${conversionCurrency.toUpperCase()}`}</b>
           </p>
           <p>As of {result?.date}</p>
