@@ -87,7 +87,6 @@ const Convert = () => {
         throw new Error("Failed to fetch data");
       }
       const rates = await data.json();
-      console.log(rates[baseCurrency][conversionCurrency]);
       setResult(rates);
     } catch (error) {
       console.error("Error fetching data:", error.message);
